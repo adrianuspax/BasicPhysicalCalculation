@@ -139,6 +139,17 @@ namespace PhysicalCalculation
         {
             return v0 + (a * t);
         }
+        /// <summary>
+        /// S = S0 + v0 * t + ½at² => v0 = ((S - S0) / t) - ½a * t
+        /// </summary>
+        /// <param name="s">space</param>
+        /// <param name="a">acceleration</param>
+        /// <param name="t">time</param>
+        /// <returns>Initial Speed (v0)</returns>
+        public static float Get(Space s, float a, float t)
+        {
+            return (s.Delta / t) - 0.5f * a * t;
+        }
     }
 
     public struct Acceleration
@@ -162,6 +173,17 @@ namespace PhysicalCalculation
         {
             this.v = new Speed(v);
             this.t = new Time(t);
+        }
+        /// <summary>
+        /// S = S0 + v0 * t + ½at² => a = (2 * ((S - S0) - v0 * t)) / t²
+        /// </summary>
+        /// <param name="s">space</param>
+        /// <param name="v0">initial speed</param>
+        /// <param name="t">time</param>
+        /// <returns>acceleration (a)</returns>
+        public static float Get(Space s, float v0, float t)
+        {
+            return 2f * (s.Delta - v0 * t) / Mathf.Pow(t, 2);
         }
 
         public readonly float Average => v.Average / t.Delta;
