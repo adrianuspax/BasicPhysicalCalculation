@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace PhysicalCalculation
 {
     public struct Space
@@ -18,6 +20,18 @@ namespace PhysicalCalculation
         }
 
         public readonly float Delta => s1 - s0;
+        /// <summary>
+        /// S = S0 + v0 * t + ½ * at²
+        /// </summary>
+        /// <param name="s0">initial space</param>
+        /// <param name="v0">initial speed</param>
+        /// <param name="a">acceleration</param>
+        /// <param name="t">time (total)</param>
+        /// <returns>S (space)</returns>
+        public static float Get(float s0, float v0, float a, float t)
+        {
+            return s0 + v0 * t + a * Mathf.Pow(t, 2) * 0.5f;
+        }
 
         public static float MetersToKilometers(float m)
         {
@@ -114,6 +128,17 @@ namespace PhysicalCalculation
         }
 
         public readonly float Average => s.Delta / t.Delta;
+        /// <summary>
+        /// v = v0 + a * t
+        /// </summary>
+        /// <param name="v0">Initial Speed</param>
+        /// <param name="a">Acceleration</param>
+        /// <param name="t">Time (Total)</param>
+        /// <returns>v (speed)</returns>
+        public static float Get(float v0, float a, float t)
+        {
+            return v0 + (a * t);
+        }
     }
 
     public struct Acceleration
@@ -124,6 +149,12 @@ namespace PhysicalCalculation
         public Acceleration(Speed v, Time t)
         {
             this.v = v;
+            this.t = t;
+        }
+
+        public Acceleration((float v0, float v1) speeds, Time t)
+        {
+            v = new(speeds.v1 - speeds.v0);
             this.t = t;
         }
 
