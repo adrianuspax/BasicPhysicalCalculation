@@ -28,9 +28,22 @@ namespace PhysicalCalculation
         /// <param name="a">acceleration</param>
         /// <param name="t">time (total)</param>
         /// <returns>S (space)</returns>
-        public static float Get(float s0, float v0, float a, float t)
+        public static Space Get(float s0, float v0, Acceleration a, Time t)
         {
-            return s0 + v0 * t + a * Mathf.Pow(t, 2) * 0.5f;
+            Space s = new(s0 + v0 * t.Delta + a.Average * Mathf.Pow(t.Delta, 2) * 0.5f);
+            return s;
+        }
+        /// <summary>
+        /// v² = v0² + 2a(S - S0) => (S - S0) = (v² - v0²) / 2a
+        /// </summary>
+        /// <param name="v0">initial speed</param>
+        /// <param name="v">final speed</param>
+        /// <param name="a">acceleration</param>
+        /// <returns>space (s)</returns>
+        public static Space Get(float v0, float v, Acceleration a)
+        {
+            Space s = new((Mathf.Pow(v, 2) - Mathf.Pow(v0, 2)) / (2f * a.Average));
+            return s;
         }
 
         public static float MetersToKilometers(float m)
@@ -134,10 +147,11 @@ namespace PhysicalCalculation
         /// <param name="v0">Initial Speed</param>
         /// <param name="a">Acceleration</param>
         /// <param name="t">Time (Total)</param>
-        /// <returns>v (speed)</returns>
-        public static float Get(float v0, float a, float t)
+        /// <returns>speed (v)</returns>
+        public static Speed Get(float v0, Acceleration a, Time t)
         {
-            return v0 + (a * t);
+            Speed v = new(v0 + (a.Average * t.Delta));
+            return v;
         }
         /// <summary>
         /// S = S0 + v0 * t + ½at² => v0 = ((S - S0) / t) - ½a * t
@@ -146,9 +160,22 @@ namespace PhysicalCalculation
         /// <param name="a">acceleration</param>
         /// <param name="t">time</param>
         /// <returns>Initial Speed (v0)</returns>
-        public static float Get(Space s, float a, float t)
+        public static float Get(Space s, Acceleration a, Time t)
         {
-            return (s.Delta / t) - 0.5f * a * t;
+            return (s.Delta / t.Delta) - 0.5f * a.Average * t.Delta;
+        }
+        /// <summary>
+        /// v² = v0² + 2a(S - S0) => v = sqrt( v0² + 2a(S - S0) )
+        /// </summary>
+        /// <param name="s">space</param>
+        /// <param name="a">acceleration</param>
+        /// <param name="v0">initial speed</param>
+        /// <returns>speed (v)</returns>
+        public static Speed Get(Space s, Acceleration a, float v0)
+        {
+            float v0p2 = Mathf.Pow(v0, 2);
+            Speed v = new(Mathf.Sqrt(v0p2 + 2f * a.Average * s.Delta));
+            return v;
         }
     }
 
@@ -174,6 +201,12 @@ namespace PhysicalCalculation
             this.v = new Speed(v);
             this.t = new Time(t);
         }
+
+        public Acceleration(float a)
+        {
+            v = new Speed(a);
+            t = new Time(1f);
+        }
         /// <summary>
         /// S = S0 + v0 * t + ½at² => a = (2 * ((S - S0) - v0 * t)) / t²
         /// </summary>
@@ -181,9 +214,22 @@ namespace PhysicalCalculation
         /// <param name="v0">initial speed</param>
         /// <param name="t">time</param>
         /// <returns>acceleration (a)</returns>
-        public static float Get(Space s, float v0, float t)
+        public static Acceleration Get(Space s, float v0, float t)
         {
-            return 2f * (s.Delta - v0 * t) / Mathf.Pow(t, 2);
+            Acceleration a = new(2f * (s.Delta - v0 * t) / Mathf.Pow(t, 2));
+            return a;
+        }
+        /// <summary>
+        /// v² = v0² + 2a(S - S0) => a = (v² - v0²) / 2(S - S0)
+        /// </summary>
+        /// <param name="v0">initial speed</param>
+        /// <param name="v">final speed</param>
+        /// <param name="s">space</param>
+        /// <returns>acceleration (a)</returns>
+        public static Acceleration Get(float v0, float v, Space s)
+        {
+            Acceleration a = new((Mathf.Pow(v, 2) - Mathf.Pow(v0, 2)) / (2f * s.Delta));
+            return a;
         }
 
         public readonly float Average => v.Average / t.Delta;
