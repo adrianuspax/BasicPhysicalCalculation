@@ -57,7 +57,88 @@ namespace PhysicalCalculation
 
         public static float Convert(Unit from, Unit to, float value)
         {
-            return default;
+            const float YD_FACTOR = 0.9144f;
+
+            return from switch
+            {
+                Unit.meter => value * conversion(),
+                Unit.centimeter => value * conversion(),
+                Unit.kilometer => value * conversion(),
+                Unit.yard => value * conversion(),
+                _ => value * 0f,
+            };
+
+            float conversion()
+            {
+                return to switch
+                {
+                    Unit.meter => 1f * factor(),
+                    Unit.centimeter => 100f * factor(),
+                    Unit.kilometer => 1f / 1000f * factor(),
+                    Unit.yard => (1f / YD_FACTOR) * factor(),
+                    _ => 0f
+                };
+            }
+
+            float factor()
+            {
+                return from switch
+                {
+                    Unit.meter => 1f,
+                    Unit.centimeter => 1f / 100f,
+                    Unit.kilometer => 1000f,
+                    Unit.yard => 1f / YD_FACTOR,
+                    _ => 0f
+                };
+            }
+
+            /*float m()
+            {
+                return to switch
+                {
+                    Unit.meter => 1f, // 1
+                    Unit.centimeter => 100f, // 100
+                    Unit.kilometer => 1f / 1000f, // 1 / 100 / 10
+                    Unit.yard => (1f / YD_FACTOR), // 1 / yd
+                    _ =>  0f
+                };
+            }
+
+            float cm()
+            {
+                return to switch
+                {
+                    Unit.meter => (1f / 100f), // 1 (/ 100)
+                    Unit.centimeter => 1f, // 100 (/ 100)
+                    Unit.kilometer => ((1f / 100f) / 1000f), // 1 / 100 / 10 (/ 100)
+                    Unit.yard => ((1f / YD_FACTOR) / 100f), // 1 / yd (/ 100)
+                    _ => 0f
+                };
+            }
+
+            float km()
+            {
+                return to switch
+                {
+                    Unit.meter => 1000f, // 1 (* 1000)
+                    Unit.centimeter => 1000f * 100f, // 100 (* 1000)
+                    Unit.kilometer => 1f, // 1 / 100 / 10 (*1000)
+                    Unit.yard => (1f / YD_FACTOR) * 1000f, // 1 / yd (* 1000)
+                    _ => 0f
+                };
+            }
+
+            float yd()
+            {
+                return to switch
+                {
+                    Unit.meter => 1f / YD_FACTOR, // 1 / yd
+                    Unit.centimeter => ((1f / YD_FACTOR) / 100f), // 100 / yd
+                    Unit.kilometer => (1f / YD_FACTOR) * 1000f, // 1 / 100 / 10 / yd
+                    Unit.yard => 1f, // 1 / yd (* yd)
+                    _ => 0f
+                };
+            }*/
         }
 
         public static (float km, float cm, float yd) ConvertMetersTo(float m)
