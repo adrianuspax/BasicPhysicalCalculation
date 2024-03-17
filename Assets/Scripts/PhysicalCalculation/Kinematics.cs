@@ -4,6 +4,15 @@ namespace PhysicalCalculation
 {
     public struct Space
     {
+        public enum Unit 
+        {
+            unknown = -1,
+            meter = 0,
+            centimeter = 1,
+            kilometer = 2,
+            yard = 3
+        }
+
         public float s0;
         public float s1;
 
@@ -21,7 +30,7 @@ namespace PhysicalCalculation
 
         public readonly float Delta => s1 - s0;
         /// <summary>
-        /// S = S0 + v0 * t + ½ * at²
+        /// S = S0 + v0 * t + ½ * a * t²
         /// </summary>
         /// <param name="s0">initial space</param>
         /// <param name="v0">initial speed</param>
@@ -34,7 +43,7 @@ namespace PhysicalCalculation
             return s;
         }
         /// <summary>
-        /// v² = v0² + 2a(S - S0) => (S - S0) = (v² - v0²) / 2a
+        /// v² = v0² + 2 * a * (S - S0) => (S - S0) = (v² - v0²) / (2 * a)
         /// </summary>
         /// <param name="v0">initial speed</param>
         /// <param name="v">final speed</param>
@@ -46,44 +55,38 @@ namespace PhysicalCalculation
             return s;
         }
 
-        public static float MetersToKilometers(float m)
+        public static float Convert(Unit from, Unit to, float value)
         {
-            return m / 1000f;
+            return default;
         }
 
-        public static float KilometersToMeters(float km)
+        public static (float km, float cm, float yd) ConvertMetersTo(float m)
         {
-            return km * 1000f;
+            return (_kilometers(), _centimeters(), _yards());
+            float _kilometers() => m / 1000f;
+            float _centimeters() => m * 100f;
+            float _yards() => m * (1f / 0.9144f);
         }
 
-        public static float MetersToCentimeters(float m)
+        public static (float m, float yd) ConvertKilometersTo(float km)
         {
-            return m * 100f;
+            return (_meters(), _yards());
+            float _meters() => km * 1000f;
+            float _yards() => km * (1f / 0.9144f) * 1000;
         }
 
-        public static float CentimetersToMeters(float cm)
+        public static (float m, float yd) ConvertCentimetersTo(float cm)
         {
-            return cm / 100f;
+            return (_meters(), _yards());
+            float _meters() => cm / 100f;
+            float _yards() => cm * (1f / (0.9144f * 100f));
         }
 
-        public static float YardToMeter(float yd)
+        public static (float m, float cm) ConvertYardsTo(float yd)
         {
-            return yd * 0.9144f;
-        }
-
-        public static float YardToCentimeter(float yd)
-        {
-            return yd * 0.9144f * 100f;
-        }
-
-        public static float MeterToYard(float m)
-        {
-            return m * (1f / 0.9144f);
-        }
-
-        public static float CentimeterToYard(float cm)
-        {
-            return cm * (1f / (0.9144f * 100f));
+            return (_meters(), _centimeters());
+            float _meters() => yd * 0.9144f;
+            float _centimeters() => yd * 0.9144f * 100f;
         }
     }
 
@@ -154,7 +157,7 @@ namespace PhysicalCalculation
             return v;
         }
         /// <summary>
-        /// S = S0 + v0 * t + ½at² => v0 = ((S - S0) / t) - ½a * t
+        /// S = S0 + v0 * t + ½ * a * t² => v0 = ((S - S0) / t) - ½ * a * t
         /// </summary>
         /// <param name="s">space</param>
         /// <param name="a">acceleration</param>
@@ -165,7 +168,7 @@ namespace PhysicalCalculation
             return (s.Delta / t.Delta) - 0.5f * a.Average * t.Delta;
         }
         /// <summary>
-        /// v² = v0² + 2a(S - S0) => v = sqrt( v0² + 2a(S - S0) )
+        /// v² = v0² + 2 * a * (S - S0) => v = sqrt( v0² + 2 * a * (S - S0))
         /// </summary>
         /// <param name="s">space</param>
         /// <param name="a">acceleration</param>
@@ -208,7 +211,7 @@ namespace PhysicalCalculation
             t = new Time(1f);
         }
         /// <summary>
-        /// S = S0 + v0 * t + ½at² => a = (2 * ((S - S0) - v0 * t)) / t²
+        /// S = S0 + v0 * t + ½ * a * t² => a = (2 * ((S - S0) - v0 * t)) / t²
         /// </summary>
         /// <param name="s">space</param>
         /// <param name="v0">initial speed</param>
@@ -220,7 +223,7 @@ namespace PhysicalCalculation
             return a;
         }
         /// <summary>
-        /// v² = v0² + 2a(S - S0) => a = (v² - v0²) / 2(S - S0)
+        /// v² = v0² + 2 * a * (S - S0) => a = (v² - v0²) / 2 * (S - S0)
         /// </summary>
         /// <param name="v0">initial speed</param>
         /// <param name="v">final speed</param>
