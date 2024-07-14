@@ -1,7 +1,37 @@
-using UnityEngine;
-
 namespace PhysicalCalculation
 {
+    using UnityEngine;
+
+    public struct Time
+    {
+        public float t0;
+        public float t1;
+
+        public Time(float t0, float t1)
+        {
+            this.t0 = t0;
+            this.t1 = t1;
+        }
+
+        public Time(float t)
+        {
+            t0 = 0f;
+            t1 = t;
+        }
+
+        public readonly float Delta => t1 - t0;
+
+        public static float SecondsToMinutes(float s)
+        {
+            return s / 60f;
+        }
+
+        public static float MinutesToSeconds(float min)
+        {
+            return min * 60f;
+        }
+    }
+
     public struct Space
     {
         public enum Unit 
@@ -168,36 +198,6 @@ namespace PhysicalCalculation
             return (_meters(), _centimeters());
             float _meters() => yd * 0.9144f;
             float _centimeters() => yd * 0.9144f * 100f;
-        }
-    }
-
-    public struct Time
-    {
-        public float t0;
-        public float t1;
-
-        public Time(float t0, float t1)
-        {
-            this.t0 = t0;
-            this.t1 = t1;
-        }
-
-        public Time(float t)
-        {
-            t0 = 0f;
-            t1 = t;
-        }
-
-        public readonly float Delta => t1 - t0;
-
-        public static float SecondsToMinutes(float s)
-        {
-            return s / 60f;
-        }
-
-        public static float MinutesToSeconds(float min)
-        {
-            return min * 60f;
         }
     }
 
