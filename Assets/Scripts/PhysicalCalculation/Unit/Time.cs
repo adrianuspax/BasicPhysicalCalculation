@@ -1,13 +1,91 @@
 using System;
 using UnityEngine;
 
-namespace Unit
+namespace ASP.Unit
 {
     /// <summary>
     /// Class for handling time scales
     /// </summary>
     public static class Time
     {
+        #region HundredthsOfSeconds
+        /// <summary>
+        /// Struct for handling hundredths of seconds
+        /// </summary>
+        [Serializable]
+        public struct HundredthsOfSeconds
+        {
+            /// <summary>
+            /// Pure hundredths of seconds value
+            /// </summary>
+            public float value;
+            /// <summary>
+            /// Construct to handling hundredths of seconds
+            /// </summary>
+            /// <param name="value">Pure seconds value</param>
+            public HundredthsOfSeconds(float value)
+            {
+                PositiveTimeGuarantee(ref value);
+                this.value = value;
+            }
+            /// <summary>
+            /// Converts tenths of seconds into a string according to a chosen format
+            /// </summary>
+            /// <param name="format">Tenths of seconds display format in string</param>
+            /// <returns>Returns a string of tenths of seconds according to the chosen format</returns>
+            public readonly string ToString(Format format)
+            {
+                return string.Format(format.value, Mathf.Floor(value));
+            }
+            /// <summary>
+            /// Pure value to integer conversion by floor
+            /// </summary>
+            public readonly int FloorValue => Mathf.FloorToInt(value);
+
+            public static implicit operator string(HundredthsOfSeconds value) => value.value.ToString();
+            public static implicit operator int(HundredthsOfSeconds value) => (int)value.value;
+            public static implicit operator float(HundredthsOfSeconds value) => value.value;
+        }
+        #endregion
+        #region TenthsOfSeconds
+        /// <summary>
+        /// Struct for handling tenths of seconds
+        /// </summary>
+        [Serializable]
+        public struct TenthsOfSeconds
+        {
+            /// <summary>
+            /// Pure tenths of seconds value
+            /// </summary>
+            public float value;
+            /// <summary>
+            /// Construct to handling tenths of seconds
+            /// </summary>
+            /// <param name="value">Pure seconds value</param>
+            public TenthsOfSeconds(float value)
+            {
+                PositiveTimeGuarantee(ref value);
+                this.value = value;
+            }
+            /// <summary>
+            /// Converts tenths of seconds into a string according to a chosen format
+            /// </summary>
+            /// <param name="format">Tenths of seconds display format in string</param>
+            /// <returns>Returns a string of tenths of seconds according to the chosen format</returns>
+            public readonly string ToString(Format format)
+            {
+                return string.Format(format.value, Mathf.Floor(value));
+            }
+            /// <summary>
+            /// Pure value to integer conversion by floor
+            /// </summary>
+            public readonly int FloorValue => Mathf.FloorToInt(value);
+
+            public static implicit operator string(TenthsOfSeconds value) => value.value.ToString();
+            public static implicit operator int(TenthsOfSeconds value) => (int)value.value;
+            public static implicit operator float(TenthsOfSeconds value) => value.value;
+        }
+        #endregion
         #region Seconds
         /// <summary>
         /// Struct to handling seconds
@@ -27,6 +105,40 @@ namespace Unit
             {
                 PositiveTimeGuarantee(ref value);
                 this.value = value;
+            }
+            /// <summary>
+            /// Conversion to the time scale in hundredths of seconds
+            /// </summary>
+            /// <param name="value">Pure seconds value</param>
+            /// <returns>return new <see cref="HundredthsOfSeconds"/>(<paramref name="value"/> * 100f)</returns>
+            public static HundredthsOfSeconds ToHundredthsOfSeconds(float value)
+            {
+                return new HundredthsOfSeconds(value * 100f);
+            }
+            /// <summary>
+            /// Conversion to the time scale in hundredths of seconds
+            /// </summary>
+            /// <returns>return new <see cref="HundredthsOfSeconds"/>(<see cref="value"/> * 100f)</returns>
+            public readonly HundredthsOfSeconds ToHundredthsOfSeconds()
+            {
+                return ToHundredthsOfSeconds(value);
+            }
+            /// <summary>
+            /// Conversion to the time scale in tenths of seconds
+            /// </summary>
+            /// <param name="value">Pure seconds value</param>
+            /// <returns>return new <see cref="TenthsOfSeconds"/>(<paramref name="value"/> * 10f)</returns>
+            public static TenthsOfSeconds ToTenthsOfSeconds(float value)
+            {
+                return new TenthsOfSeconds(value * 10f);
+            }
+            /// <summary>
+            /// Conversion to the time scale in hundredths of seconds
+            /// </summary>
+            /// <returns>return new <see cref="TenthsOfSeconds"/>(<see cref="value"/> * 10f)</returns>
+            public readonly TenthsOfSeconds ToTenthsOfSeconds()
+            {
+                return ToTenthsOfSeconds(value);
             }
             /// <summary>
             /// Conversion to the time scale in minutes
@@ -65,207 +177,24 @@ namespace Unit
             /// <summary>
             /// Converts seconds into a string according to a chosen format
             /// </summary>
-            /// <param name="seconds">Seconds display format in string</param>
+            /// <param name="format">Seconds display format in string</param>
             /// <returns>Returns a string of seconds according to the chosen format</returns>
-            public readonly string ToString(Format seconds)
+            public readonly string ToString(Format format)
             {
-                return string.Format(seconds.value, Mathf.Floor(value));
+                return string.Format(format.value, Mathf.Floor(value));
             }
             /// <summary>
             /// Pure value to integer conversion by floor
             /// </summary>
             public readonly int FloorValue => Mathf.FloorToInt(value);
-            /// <summary>
-            /// Struct for handling tenths of seconds
-            /// </summary>
-            [Serializable]
-            public struct Tenths
-            {
-                /// <summary>
-                /// Pure tenths of seconds value
-                /// </summary>
-                public float value;
-                [SerializeField] private float tenths;
-                [SerializeField] private float seconds;
-                /// <summary>
-                /// Construct to handling tenths of seconds
-                /// </summary>
-                /// <param name="seconds">Pure seconds value</param>
-                public Tenths(float seconds)
-                {
-                    PositiveTimeGuarantee(ref seconds);
-                    this.seconds = seconds;
-                    value = (seconds * 10f);
-                    tenths = value % 10f;
-                }
-                /// <summary>
-                /// Get puere seconds value
-                /// </summary>
-                /// <returns>Seconds in floater</returns>
-                public readonly float GetSeconds()
-                {
-                    return seconds;
-                }
-                /// <summary>
-                /// Converts tenths of seconds into a string according to a chosen format
-                /// </summary>
-                /// <param name="secondsAndTenths">Tenths of seconds display format in string</param>
-                /// <returns>Returns a string of tenths of seconds according to the chosen format</returns>
-                public readonly string ToString(Format secondsAndTenths)
-                {
-                    return string.Format(secondsAndTenths.value, Mathf.Floor(seconds), Mathf.Floor(tenths));
-                }
-                /// <summary>
-                /// Pure value to integer conversion by floor
-                /// </summary>
-                public readonly int FloorValue => Mathf.FloorToInt(value);
-                /// <summary>
-                /// Tenths value to integer conversion by floor
-                /// </summary>
-                public readonly int FractionalRemainder => Mathf.FloorToInt(tenths);
-                /// <summary>
-                /// Struct that stores the formats for tenths of seconds strings
-                /// </summary>
-                [Serializable]
-                public struct Format
-                {
-                    /// <summary>
-                    /// Pure format string
-                    /// </summary>
-                    public string value;
-                    /// <summary>
-                    /// Construct to store the format in string
-                    /// </summary>
-                    /// <param name="value">Enter the string with the format</param>
-                    public Format(string value)
-                    {
-                        this.value = value;
-                    }
-                    /// <summary>
-                    /// Single digit or double digit for seconds and tenths of seconds separated by a dot.<br/>
-                    /// Exemple singleDigits: 9.3<br/>
-                    /// Exemple doubleDigits: 09.03<br/>
-                    /// </summary>
-                    public static (Format singleDigits, Format doubleDigits) SecondsAndTenthsFormat 
-                        => (new("{0:0}.{1:0}"), new("{0:00}.{1:00}"));
-                    /// <summary>
-                    /// Single digit or double digit for seconds and tenths of seconds with single digit. Separated by a dot.<br/>
-                    /// Exemple singleDigits: 9.3<br/>
-                    /// Exemple doubleDigits: 09.3<br/>
-                    /// </summary>
-                    public static (Format singleDigit, Format doubleDigits) SecondsFormat
-                        => (new("{0:0}.{1:0}"), new("{0:00}.{1:0}"));
-                    /// <summary>
-                    /// Single digit or double digit for tenths of seconds and seconds with single digit. Separated by a dot.<br/>
-                    /// Exemple singleDigits: 9.3<br/>
-                    /// Exemple doubleDigits: 9.03<br/>
-                    /// </summary>
-                    public static (Format singleDigit, Format doubleDigits) TenthsFormat 
-                        => (new("{0:0}.{1:0}"), new("{0:0}.{1:00}"));
-                }
-            }
-            /// <summary>
-            /// Struct for handling hundredths of seconds
-            /// </summary>
-            [Serializable]
-            public struct Hundredths
-            {
-                /// <summary>
-                /// Pure hundredths of seconds value
-                /// </summary>
-                public float value;
-                [SerializeField] private float seconds;
-                [SerializeField] private float hundredths;
-                /// <summary>
-                /// Construct to handling hundredths of seconds
-                /// </summary>
-                /// <param name="seconds">Pure seconds value</param>
-                public Hundredths(float seconds)
-                {
-                    PositiveTimeGuarantee(ref seconds);
-                    this.seconds = seconds;
-                    value = seconds * 100f;
-                    hundredths = value % 100f;
-                }
-                /// <summary>
-                /// Get puere seconds value
-                /// </summary>
-                /// <returns>Seconds in floater</returns>
-                public readonly float GetSeconds()
-                {
-                    return seconds;
-                }
-                /// <summary>
-                /// Converts tenths of seconds into a string according to a chosen format
-                /// </summary>
-                /// <param name="secondsAndHundredths">Tenths of seconds display format in string</param>
-                /// <returns>Returns a string of tenths of seconds according to the chosen format</returns>
-                public readonly string ToString(Format secondsAndHundredths)
-                {
-                    return string.Format(secondsAndHundredths.value, Mathf.Floor(seconds), Mathf.Floor(hundredths));
-                }
-                /// <summary>
-                /// Pure value to integer conversion by floor
-                /// </summary>
-                public readonly int FloorValue => Mathf.FloorToInt(value);
-                /// <summary>
-                /// Hundredths value to integer conversion by floor
-                /// </summary>
-                public readonly int FractionalRemainder => Mathf.FloorToInt(hundredths);
-                /// <summary>
-                /// Struct that stores the formats for tenths of seconds strings
-                /// </summary>
-                [Serializable]
-                public struct Format
-                {
-                    /// <summary>
-                    /// Pure format string
-                    /// </summary>
-                    public string value;
-                    /// <summary>
-                    /// Construct to store the format in string
-                    /// </summary>
-                    /// <param name="value">Enter the string with the format</param>
-                    public Format(string value)
-                    {
-                        this.value = value;
-                    }
-                    /// <summary>
-                    /// Single digit or double digit for seconds and hundreths of seconds. Separated by a dot.<br/>
-                    /// Exemple singleDigits: 9.33<br/>
-                    /// Exemple doubleDigits: 09.33<br/>
-                    /// </summary>
-                    public static (Format singleDigit, Format doubleDigits) SecondsFormat
-                        => (new("{0:0}.{1:00}"), new("{0:00}.{1:00}"));
-                }
-            }
-            /// <summary>
-            /// Struct that stores the formats for tenths of seconds strings
-            /// </summary>
-            [Serializable]
-            public struct Format
-            {
-                /// <summary>
-                /// Pure format string
-                /// </summary>
-                public string value;
-                /// <summary>
-                /// Construct to store the format in string
-                /// </summary>
-                /// <param name="value">Enter the string with the format</param>
-                public Format(string value)
-                {
-                    this.value = value;
-                }
-                /// <summary>
-                /// Single digit, double digit or triple digit for seconds. Separated by a dot.<br/>
-                /// Exemple singleDigits: 9<br/>
-                /// Exemple doubleDigits: 09<br/>
-                /// Exemple tripleDigits: 009<br/>
-                /// </summary>
-                public static (Format singleDigit, Format doubleDigits, Format tripleDigits) SecondsFormat
-                    => (new("{0:0}"), new("{0:00}"), new("{0:000}"));
-            }
+
+            public static implicit operator string(Seconds seconds) => seconds.value.ToString();
+            public static implicit operator int(Seconds seconds) => (int)seconds.value;
+            public static implicit operator float(Seconds seconds) => seconds.value;
+            public static implicit operator HundredthsOfSeconds(Seconds seconds) => ToHundredthsOfSeconds(seconds.value);
+            public static implicit operator TenthsOfSeconds(Seconds seconds) => ToTenthsOfSeconds(seconds.value);
+            public static implicit operator Minutes(Seconds seconds) => ToMinutes(seconds.value);
+            public static implicit operator Hours(Seconds seconds) => ToHours(seconds.value);
         }
         #endregion
         #region Minutes
@@ -323,36 +252,24 @@ namespace Unit
                 return ToHours(value);
             }
             /// <summary>
+            /// Converts seconds into a string according to a chosen format
+            /// </summary>
+            /// <param name="format">Seconds display format in string</param>
+            /// <returns>Returns a string of seconds according to the chosen format</returns>
+            public readonly string ToString(Format format)
+            {
+                return string.Format(format.value, Mathf.Floor(value));
+            }
+            /// <summary>
             /// Pure value to integer conversion by floor
             /// </summary>
             public readonly int FloorValue => Mathf.FloorToInt(value);
-            /// <summary>
-            /// Struct that stores the formats for tenths of seconds strings
-            /// </summary>
-            [Serializable]
-            public struct Format
-            {
-                /// <summary>
-                /// Pure format string
-                /// </summary>
-                public string value;
-                /// <summary>
-                /// Construct to store the format in string
-                /// </summary>
-                /// <param name="value">Enter the string with the format</param>
-                public Format(string value)
-                {
-                    this.value = value;
-                }
-                /// <summary>
-                /// Single digit, double digit or triple digit for seconds. Separated by a dot.<br/>
-                /// Exemple singleDigits: 9<br/>
-                /// Exemple doubleDigits: 09<br/>
-                /// Exemple tripleDigits: 009<br/>
-                /// </summary>
-                public static (Format singleDigit, Format doubleDigits, Format tripleDigits) SecondsFormat
-                    => (new("{0:0}"), new("{0:00}"), new("{0:000}"));
-            }
+
+            public static implicit operator string(Minutes minutes) => minutes.value.ToString();
+            public static implicit operator int(Minutes minutes) => (int)minutes.value;
+            public static implicit operator float(Minutes minutes) => minutes.value;
+            public static implicit operator Seconds(Minutes minutes) => ToSeconds(minutes.value);
+            public static implicit operator Hours(Minutes minutes) => ToHours(minutes.value);
         }
         #endregion
         #region Hours
@@ -410,38 +327,54 @@ namespace Unit
                 return ToSeconds(value);
             }
             /// <summary>
+            /// Converts seconds into a string according to a chosen format
+            /// </summary>
+            /// <param name="format">Seconds display format in string</param>
+            /// <returns>Returns a string of seconds according to the chosen format</returns>
+            public readonly string ToString(Format format)
+            {
+                return string.Format(format.value, Mathf.Floor(value));
+            }
+            /// <summary>
             /// Pure value to integer conversion by floor
             /// </summary>
             public readonly int FloorValue => Mathf.FloorToInt(value);
-            /// <summary>
-            /// Struct that stores the formats for tenths of seconds strings
-            /// </summary>
-            [Serializable]
-            public struct Format
-            {
-                /// <summary>
-                /// Pure format string
-                /// </summary>
-                public string value;
-                /// <summary>
-                /// Construct to store the format in string
-                /// </summary>
-                /// <param name="value">Enter the string with the format</param>
-                public Format(string value)
-                {
-                    this.value = value;
-                }
-                /// <summary>
-                /// Single digit, double digit or triple digit for seconds. Separated by a dot.<br/>
-                /// Exemple singleDigits: 9<br/>
-                /// Exemple doubleDigits: 09<br/>
-                /// Exemple tripleDigits: 009<br/>
-                /// </summary>
-                public static (Format singleDigit, Format doubleDigits, Format tripleDigits) SecondsFormat
-                    => (new("{0:0}"), new("{0:00}"), new("{0:000}"));
-            }
+
+            public static implicit operator string(Hours hours) => hours.value.ToString();
+            public static implicit operator int(Hours hours) => (int)hours.value;
+            public static implicit operator float(Hours hours) => hours.value;
+            public static implicit operator Minutes(Hours hours) => ToMinutes(hours.value);
+            public static implicit operator Seconds(Hours hours) => ToSeconds(hours.value);
         }
         #endregion
+        /// <summary>
+        /// Struct that stores the formats for tenths of seconds strings
+        /// </summary>
+        [Serializable]
+        public struct Format
+        {
+            /// <summary>
+            /// Pure format string
+            /// </summary>
+            public string value;
+            /// <summary>
+            /// Construct to store the format in string
+            /// </summary>
+            /// <param name="value">Enter the string with the format</param>
+            public Format(string value)
+            {
+                this.value = value;
+            }
+            /// <summary>
+            /// Single digit, double digit or triple digit<br/>
+            /// Exemple singleDigits: 9<br/>
+            /// Exemple doubleDigits: 09<br/>
+            /// Exemple tripleDigits: 009<br/>
+            /// </summary>
+            public static (Format single, Format @double, Format triple) Digit
+                => (new("{0:0}"), new("{0:00}"), new("{0:000}"));
+        }
+        
         private static void PositiveTimeGuarantee(ref float value)
         {
             if (value < 0f)
